@@ -73,6 +73,24 @@ Si le joueur trouve le mot avant la fin des 6 essais, il gagne la partie et un s
 Si le joueur utilise les 6 essais sans trouver le mot, la partie est perdue.
 
 ---
+## Système de score et classement
+
+À la fin d’une partie gagnée, un score est calculé selon la performance du joueur.
+
+Le classement affiche le meilleur score obtenu par chaque joueur.
+
+Cela signifie que si un joueur gagne plusieurs parties, le score affiché dans le classement ne correspond pas à la somme de toutes ses parties, mais à son meilleur résultat.
+
+Exemple :
+
+- partie 1 : 490 points ;
+- partie 2 : 320 points ;
+- partie 3 : 450 points.
+
+Dans ce cas, le classement affichera :
+
+```text
+490 points
 
 ## Structure du projet
 

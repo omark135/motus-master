@@ -35,6 +35,33 @@ Le projet contient une partie front-end, une partie back-end, un système d’au
 - Swagger pour la documentation de l’API
 
 ---
+## Lancement avec Docker
+
+Le projet contient une configuration Docker avec :
+
+```text
+docker-compose.yml
+backend/Dockerfile
+frontend/Dockerfile
+```
+
+Pour lancer le projet avec Docker, il faut se placer à la racine du projet, puis exécuter :
+
+```powershell
+docker compose up --build
+```
+
+Une fois les conteneurs lancés, l’application est disponible ici :
+
+```text
+Front-end : http://localhost:5173
+Back-end : http://localhost:3000
+Swagger : http://localhost:3000/swagger
+```
+
+Cette méthode permet de lancer le front-end et le back-end dans un environnement standardisé.
+
+En cas de problème local avec Docker, le projet peut aussi être lancé manuellement avec Node.js en lançant séparément le back-end et le front-end.
 
 ## Fonctionnalités principales
 

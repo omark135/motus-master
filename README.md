@@ -1,239 +1,98 @@
 # Motus Master
 
-Projet complet de jeu **Motus** avec authentification, niveaux de difficulté, score, classement, API REST, Swagger, Docker et base SQLite.
+## Description du projet
 
-## Fonctionnalités
+Motus Master est une application web inspirée du jeu Motus.  
+Le principe est simple : le joueur doit trouver un mot secret en 6 tentatives maximum.
 
-- Création de compte et connexion.
-- JWT pour protéger les routes du jeu.
-- Partie impossible sans connexion.
-- 6 tentatives maximum.
-- Première lettre du mot affichée.
-- Niveaux de difficulté :
-  - Facile : 5 lettres
-  - Moyen : 7 lettres
-  - Difficile : 9 lettres
-- Grille Motus avec indices :
-  - Rouge : lettre bien placée
-  - Jaune : lettre présente mais mal placée
-  - Bleu : lettre absente
-- Vérification des mots proposés.
-- Sauvegarde des scores.
-- Classement des joueurs.
-- Interface responsive.
-- Documentation Swagger disponible sur `http://localhost:3000/swagger`.
-- Projet dockerisé.
-- Initialisation automatique de la base de données.
+À chaque proposition, le jeu donne des indices visuels pour aider le joueur :
+
+- une lettre bien placée est affichée en rouge ;
+- une lettre présente dans le mot mais mal placée est affichée en jaune ;
+- une lettre absente du mot est affichée en bleu.
+
+La première lettre du mot secret est affichée dès le début de la partie.
+
+Le projet contient une partie front-end, une partie back-end, un système d’authentification, une base de données SQLite, un classement des joueurs et une documentation Swagger.
+
+---
 
 ## Technologies utilisées
-
-### Back-end
-
-- Node.js
-- Express
-- SQLite
-- JWT
-- bcrypt
-- Swagger UI
 
 ### Front-end
 
 - React
 - Vite
-- CSS simple responsive
-
-## Architecture
-
-```text
-motus-master/
-├── backend/
-│   ├── src/
-│   │   ├── db/
-│   │   │   ├── database.js
-│   │   │   └── schema.sql
-│   │   ├── middleware/
-│   │   │   └── auth.js
-│   │   ├── routes/
-│   │   │   ├── auth.routes.js
-│   │   │   ├── game.routes.js
-│   │   │   └── score.routes.js
-│   │   ├── utils/
-│   │   │   ├── motus.js
-│   │   │   └── wordProvider.js
-│   │   ├── swagger.js
-│   │   └── server.js
-│   ├── Dockerfile
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── services/api.js
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── styles.css
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-├── docs/
-│   └── modifications_bdd.md
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
-## Lancer le projet avec Docker
-
-### 1. Copier les variables d'environnement
-
-```bash
-cp .env.example .env
-```
-
-### 2. Lancer le projet
-
-```bash
-docker compose up --build
-```
-
-### 3. Ouvrir le projet
-
-- Front-end : `http://localhost:5173`
-- Back-end : `http://localhost:3000`
-- Swagger : `http://localhost:3000/swagger`
-
-## Lancer le projet sans Docker
+- CSS
 
 ### Back-end
 
-```bash
-cd backend
-npm install
-cp ../.env.example ../.env
-npm run dev
-```
+- Node.js
+- Express.js
+- SQLite
+- JWT pour l’authentification
+- bcrypt pour le hashage des mots de passe
+- Swagger pour la documentation de l’API
 
-### Front-end
+---
 
-Dans un autre terminal :
+## Fonctionnalités principales
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+- Création de compte utilisateur
+- Connexion utilisateur
+- Protection du jeu : il faut être connecté pour jouer
+- Génération d’un mot à deviner
+- Plusieurs niveaux de difficulté selon la longueur du mot
+- Grille de jeu avec 6 essais
+- Affichage des indices après chaque tentative
+- Gestion de la victoire
+- Gestion de la défaite
+- Calcul du score
+- Classement des meilleurs joueurs
+- Documentation API avec Swagger
+- Base de données initialisée automatiquement
 
-## Compte de test
+---
 
-Tu peux créer un compte depuis l'interface.
+## Règles du jeu
 
-Un compte de test est aussi disponible après l'initialisation :
+Le joueur doit deviner un mot secret.
 
-```text
-Pseudo : demo
-Mot de passe : demo1234
-```
+Il dispose de 6 essais maximum.
 
-## API principale
+La première lettre du mot est donnée automatiquement.
 
-| Méthode | Route | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Créer un compte |
-| POST | `/api/auth/login` | Se connecter |
-| POST | `/api/game/start` | Commencer une partie |
-| POST | `/api/game/guess` | Proposer un mot |
-| GET | `/api/scores/leaderboard` | Voir le classement |
-| GET | `/swagger` | Documentation Swagger |
+Après chaque essai :
 
-## Règles du score
+- rouge : la lettre est correcte et bien placée ;
+- jaune : la lettre existe dans le mot mais elle est mal placée ;
+- bleu : la lettre n’existe pas dans le mot.
 
-Le score est calculé ainsi :
+Si le joueur trouve le mot avant la fin des 6 essais, il gagne la partie et un score est ajouté au classement.
 
-```text
-score = longueur du mot * 100 - nombre de tentatives * 10 + bonus difficulté
-```
+Si le joueur utilise les 6 essais sans trouver le mot, la partie est perdue.
 
-Bonus difficulté :
+---
 
-- Facile : 0
-- Moyen : 50
-- Difficile : 100
-
-## Base de données
-
-La base SQLite est créée automatiquement au lancement du back-end.
-
-Tables principales :
-
-- `users`
-- `words`
-- `games`
-- `guesses`
-- `scores`
-
-Le détail des modifications par rapport au schéma fourni est dans :
+## Structure du projet
 
 ```text
-docs/modifications_bdd.md
-```
-
-## Mettre le projet sur GitHub
-
-### 1. Créer un dépôt GitHub
-
-Va sur GitHub, clique sur **New repository**, donne un nom au dépôt, par exemple :
-
-```text
-motus-master
-```
-
-Ne coche pas forcément README, car ce projet en contient déjà un.
-
-### 2. Initialiser Git dans le dossier du projet
-
-Dans le terminal, à la racine du projet :
-
-```bash
-git init
-git add .
-git commit -m "Initial commit - Motus Master"
-```
-
-### 3. Relier le dossier au dépôt GitHub
-
-Remplace `TON-UTILISATEUR` par ton pseudo GitHub :
-
-```bash
-git branch -M main
-git remote add origin https://github.com/TON-UTILISATEUR/motus-master.git
-git push -u origin main
-```
-
-### 4. Vérifier le rendu
-
-Sur GitHub, vérifie que les fichiers suivants sont bien visibles :
-
-- `README.md`
-- `.env.example`
-- `docker-compose.yml`
-- `backend/Dockerfile`
-- `frontend/Dockerfile`
-- `docs/modifications_bdd.md`
-
-## Commandes utiles
-
-Arrêter Docker :
-
-```bash
-docker compose down
-```
-
-Supprimer aussi le volume SQLite :
-
-```bash
-docker compose down -v
-```
-
-Voir les logs du back-end :
-
-```bash
-docker compose logs -f backend
-```
+motus-master-ready/
+│
+├── backend/
+│   ├── src/
+│   ├── package.json
+│   └── Dockerfile
+│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── Dockerfile
+│
+├── docs/
+│   └── modifications_bdd.md
+│
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+└── README.md

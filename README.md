@@ -326,17 +326,35 @@ Avant un lancement en local, il est possible de copier ce fichier en `.env`.
 
 ---
 
-## API utilisée pour les mots
+## API externe utilisée pour les mots
 
-Le projet prévoit l’utilisation d’une source de mots pour générer les mots à deviner.
+Le projet utilise l’API open source Trouve-Mot afin de récupérer des mots français selon leur longueur.
 
-Les mots sont sélectionnés selon le niveau de difficulté, notamment en fonction de leur longueur.
+API utilisée :
 
-Pour garantir un fonctionnement simple et stable lors de la correction, une liste de mots est également disponible dans la base de données locale.
+```text
+https://trouve-mot.fr/api/size/{length}
+```
 
-Cela permet au jeu de fonctionner même si une API externe est temporairement indisponible.
+Exemples :
 
----
+```text
+Facile    : https://trouve-mot.fr/api/size/5
+Moyen     : https://trouve-mot.fr/api/size/7
+Difficile : https://trouve-mot.fr/api/size/9
+```
+
+Le niveau de difficulté est donc lié à la longueur du mot :
+
+- facile : mot de 5 lettres ;
+- moyen : mot de 7 lettres ;
+- difficile : mot de 9 lettres.
+
+Lorsqu’une nouvelle partie commence, le back-end essaie d’abord de récupérer un mot depuis l’API externe.
+
+Si l’API ne répond pas, si elle est indisponible ou si la réponse n’est pas valide, le projet utilise automatiquement une liste locale de mots enregistrée dans la base SQLite.
+
+Ce fonctionnement permet de respecter la contrainte d’utilisation d’une API open source tout en garantissant que le jeu reste utilisable même en cas de problème réseau.
 
 ## Auteur
 

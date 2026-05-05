@@ -16,15 +16,32 @@ async function fetchWordFromOpenApi(length) {
       signal: controller.signal
     });
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return null;
+    }
 
     const data = await response.json();
-    const first = Array.isArray(data) ? data[0] : null;
-    const rawWord = first && (first.name || first.word || first.mot);
+
+    if (!Array.isArray(data) || data.length === 0) {
+      return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * data.length);
+    const selectedWord = data[randomIndex];
+
+    const rawWord = selectedWord && (
+      selectedWord.name ||
+      selectedWord.word ||
+      selectedWord.mot
+    );
+
     const word = rawWord ? normalizeWord(rawWord) : '';
 
-    if (word.length === length) return word;
-    return null;
+    if (word.length !== length) {
+      return null;
+    }
+
+    return word;
   } catch (error) {
     return null;
   } finally {
@@ -35,32 +52,36 @@ async function fetchWordFromOpenApi(length) {
 async function getOrCreateWord(difficulty) {
   const targetLength = getDifficultyLength(difficulty);
 
-  let row = await get(
-    'SELECT * FROM words WHERE difficulty = ? AND length = ? ORDER BY RANDOM() LIMIT 1',
-    [difficulty, targetLength]
-  );
-
-  if (row) return row;
-
   const apiWord = await fetchWordFromOpenApi(targetLength);
 
   if (apiWord) {
     const finalDifficulty = difficultyFromLength(apiWord.length);
-    const insert = await run(
+
+    await run(
       'INSERT OR IGNORE INTO words (word, length, difficulty) VALUES (?, ?, ?)',
       [apiWord, apiWord.length, finalDifficulty]
     );
 
-    row = await get('SELECT * FROM words WHERE word = ?', [apiWord]);
-    if (row) return row;
+    const row = await get('SELECT * FROM words WHERE word = ?', [apiWord]);
+
+    if (row) {
+      return row;
+    }
   }
 
-  row = await get(
+  const fallbackWord = await get(
+    'SELECT * FROM words WHERE difficulty = ? AND length = ? ORDER BY RANDOM() LIMIT 1',
+    [difficulty, targetLength]
+  );
+
+  if (fallbackWord) {
+    return fallbackWord;
+  }
+
+  return get(
     'SELECT * FROM words WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1',
     [difficulty]
   );
-
-  return row;
 }
 
 module.exports = {
